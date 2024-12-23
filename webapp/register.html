@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css">
+    <!-- Include Font Awesome for the eye icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styling for password and confirm password fields */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px; /* Add space for the eye icon */
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+        }
+
+        /* Styling for error message */
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-wrapper">
+        <div class="register-card">
+            <h2>Create Your Account</h2>
+            <p>Join us and start your journey!</p>
+            <form id="register-form" method="post" action="register.jsp">
+                <div class="form-group">
+                    <label for="name">User Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                </div>
+                
+               <!--  <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>-->
+                
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" placeholder="Enter your age" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneno">Mobile Number:</label>
+                    <input type="number" id="phoneno" name="phoneno" placeholder="Enter your Mobile Number" required>
+                </div>
+                
+               <!-- <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="Enter your location" required>
+                </div>-->
+                
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="" disabled selected>Select your gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                        <i id="toggle-password" class="fas fa-eye eye-icon"></i> <!-- Font Awesome eye icon -->
+                    </div>
+                    
+                    <div id="password-error" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                        <i id="toggle-confirm-password" class="fas fa-eye eye-icon"></i> <!-- Font Awesome eye icon -->
+                    </div>
+                    
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <p class="footer-text">Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to show/hide the password
+        function togglePasswordVisibility(passwordField, icon) {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye'); // Remove open eye icon
+                icon.classList.add('fa-eye-slash'); // Add closed eye icon
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash'); // Remove closed eye icon
+                icon.classList.add('fa-eye'); // Add open eye icon
+            }
+        }
+
+        // Event listener for the toggle password visibility
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            const passwordField = document.getElementById('password');
+            togglePasswordVisibility(passwordField, document.getElementById('toggle-password'));
+        });
+
+        document.getElementById('toggle-confirm-password').addEventListener('click', () => {
+            const confirmPasswordField = document.getElementById('confirm-password');
+            togglePasswordVisibility(confirmPasswordField, document.getElementById('toggle-confirm-password'));
+        });
+
+        // Function to check if passwords match
+        function validatePassword(password) {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+            const passwordError = document.getElementById('password-error');
+            if (!passwordRegex.test(password)) {
+                let errorMessage = "Password must contain:";
+                if (!/[A-Z]/.test(password)) errorMessage += " one uppercase letter";
+                if (!/[a-z]/.test(password)) errorMessage += ", one lowercase letter";
+                if (!/\d/.test(password)) errorMessage += ", one number";
+                if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errorMessage += ", one special character";
+                if (password.length < 8) errorMessage += ", and be at least 8 characters long";
+                passwordError.textContent = errorMessage;
+                return false;
+            }
+            passwordError.textContent = ""; // Clear error if valid
+            return true;
+        }
+
+        // Function to check if passwords match
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!validatePassword(password)) {
+                event.preventDefault(); // Prevent form submission if password is invalid
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+
+        // Function to show alert based on URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+
+        if (message === 'success') {
+            alert('Successfully registered!');
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'login.html';             
+        } else if (message === 'failure') {
+            alert('Registration failed. Please try again.');
+        } else if (message === 'error') {
+            alert('An error occurred');
+        }
+    </script>
+</body>
+</html>

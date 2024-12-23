@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            background: #fff;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .payment-methods button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .payment-methods button:hover {
+            background-color: #0056b3;
+        }
+
+        .payment-details {
+            display: none;
+        }
+
+        .payment-details.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Page</h1>
+
+        <div class="payment-methods">
+            <button data-method="atm-card">ATM Card</button>
+            <button data-method="upi">UPI</button>
+            <button data-method="net-banking">Net Banking</button>
+        </div>
+
+        <form id="paymentForm" action="PaymentProcessing.html">
+            <!-- ATM Card Details -->
+            <div id="atm-card" class="payment-details">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" name="card-number" placeholder="Enter your card number" maxlength="16">
+
+                <label for="card-expiry">Expiry Date</label>
+                <input type="month" id="card-expiry" name="card-expiry">
+
+                <label for="card-cvv">CVV</label>
+                <input type="password" id="card-cvv" name="card-cvv" placeholder="Enter CVV" maxlength="3">
+
+                <label for="card-name">Name on Card</label>
+                <input type="text" id="card-name" name="card-name" placeholder="Enter name on card">
+            </div>
+
+            <!-- UPI Details -->
+            <div id="upi" class="payment-details">
+                <label for="upi-id">UPI ID</label>
+                <input type="text" id="upi-id" name="upi-id" placeholder="Enter your UPI ID">
+            </div>
+
+            <!-- Net Banking Details -->
+            <div id="net-banking" class="payment-details">
+                <label for="bank">Select Bank</label>
+                <select id="bank" name="bank">
+                    <option value="">-- Select Bank --</option>
+                    <option value="sbi">State Bank of India</option>
+                    <option value="hdfc">HDFC Bank</option>
+                    <option value="icici">ICICI Bank</option>
+                    <option value="axis">Axis Bank</option>
+                      <option value="iob">Indian Overseas Bank</option>
+                        <option value="idfc">IDFC Bank</option>
+                          <option value="ib">Indian Bank</option>
+                            <option value="ktm">Kotak Mahendira Bank</option>
+                              <option value="cb">Canara Bank</option>
+                </select>
+
+                <label for="net-banking-id">Net Banking ID</label>
+                <input type="text" id="net-banking-id" name="net-banking-id" placeholder="Enter your Net Banking ID">
+
+                <label for="net-banking-password">Password</label>
+                <input type="password" id="net-banking-password" name="net-banking-password" placeholder="Enter your Net Banking password">
+            </div>
+
+            <button type="submit" class="submit-button">Pay Now</button>
+        </form>
+    </div>
+
+    <script>
+        const methodButtons = document.querySelectorAll('.payment-methods button');
+        const paymentDetails = document.querySelectorAll('.payment-details');
+
+        methodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const method = button.getAttribute('data-method');
+
+                // Hide all details
+                paymentDetails.forEach(detail => detail.classList.remove('active'));
+
+                // Show the selected method
+                document.getElementById(method).classList.add('active');
+            });
+        });
+
+        const paymentForm = document.getElementById('paymentForm');
+        paymentForm.addEventListener('submit', event => {
+            if (!validateForm()) {
+                event.preventDefault();
+                alert('Please fill in all required fields!');
+            }
+        });
+
+        function validateForm() {
+            const active = document.querySelector('.payment-details.active');
+            if (!active) return false;
+            return [...active.querySelectorAll('input, select')].every(input => input.value.trim());
+        }
+
+    </script> 
+
+</body>
+</html>

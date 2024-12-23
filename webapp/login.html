@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+    <!-- Include Font Awesome for the eye icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styling for password and eye icon */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 40px; /* Add space for the eye icon */
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .remember-forgot{
+    font-size: .9em;
+    color: #05190A;
+    font-weight: 500;
+    float:right;
+    margin: 15px 0 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remember-forgot label input{
+    accent-color: #05190A;
+    margin: 3px;
+}
+
+.remember-forgot a{
+    color: #05190A;
+   text-decoration:none;
+}
+
+.remember-forgot a:hover{
+    text-decoration: underline;
+    color:red;
+}
+
+        
+    </style>
+    <script>
+        function validateLoginForm() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+
+            // Validate password
+            if (password.length < 8) {
+                alert("Password must be at least 8 characters long.");
+                return false;
+            }
+
+            return true; // If all validations pass
+        }
+
+        // Function to toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("password");
+            const eyeIcon = document.getElementById("toggle-password");
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // URL parameter handling for login messages
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+        
+        if (message === 'successful') {
+            alert('Successfully logged in');
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = `index.html?message=${message}`;
+        } else if (message === 'Invalid') {
+            alert('Invalid Email Or Password.');
+            localStorage.setItem('isLoggedIn', 'false');
+        }
+    </script>
+</head>
+<body>
+    <div class="login-wrapper">
+   
+        <div class="login-card">
+            
+            <h2>Welcome ! <span style="color:#0000ff;">Basu PetStore</span></h2>
+            <p>Login to continue</p>
+            <form id="login-form" method="post" action="login.jsp" onsubmit="return validateLoginForm()">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <i id="toggle-password" class="fas fa-eye eye-icon" onclick="togglePasswordVisibility()"></i>
+                    </div>
+                     <div class="remember-forgot">
+                    <a href="mailto:example@">Forgot Paaword?</a>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p class="footer-text">Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html>

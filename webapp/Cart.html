@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+    }
+    .cart-item img {
+        width: 50px;
+        margin-right: 15px;
+    }
+    .cart-item h6 {
+        margin: 0;
+        font-size: 1rem;
+    }
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+    }
+    .quantity-controls button {
+        margin: 0 5px;
+    }
+    .total {
+        text-align: right;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+    .cart-empty {
+        text-align: center;
+        padding: 50px 0;
+    }
+    #details {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 19px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 7%;
+        margin-left: auto;
+        display: block;
+        transition: background-color 0.3s ease;
+    }
+    #details:hover {
+        background-color: #45a049;
+    }
+</style>
+</head>
+<body>
+<div>
+  
+    <div class="container mt-5">
+        <h2>Shopping Cart</h2>
+        <div id="cart-items"></div>
+        <div class="total">
+            Total: $<span id="cart-total">0.00</span>
+        </div>
+    </div>
+    <br>
+     <form id="paymentForm" action="payment.html"> 
+    
+    <button id="details">Continue</button>
+    <div id="extra-details"></div>
+    
+     </form>
+    </div>
+    <script>
+    // Load cart data from localStorage or initialize an empty array
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    async function fetchUserInfo() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+        if (isLoggedIn) {
+            try {
+                const response = await fetch('UserDetails');
+                const data = await response.json();
+
+                if (data.error) {
+                    console.error(data.error);
+                    return;
+                }
+
+                const userInfoDiv = document.getElementById('extra-details');
+                userInfoDiv.innerHTML = `
+                    <p><strong>Name:</strong> ${data.name}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Location:</strong> ${data.location}</p>
+                    <br>
+                    <button><a href="customer_register.jsp">Next</a></button>
+                `;
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        } else {
+            alert('You must log in to continue.');
+        }
+    }
+
+    function renderCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<div class="cart-empty">Your cart is empty.</div>';
+            document.getElementById('cart-total').innerText = '0.00';
+            return;
+        }
+
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+            cartItem.innerHTML = `
+                <div>
+                    <img src="image/${item.name.toLowerCase()}.jpg" alt="${item.name}">
+                    <h6>${item.name}</h6>
+                </div>
+                <div class="quantity-controls">
+                    <button class="btn btn-sm btn-secondary" onclick="changeQuantity('${item.name}', -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="btn btn-sm btn-secondary" onclick="changeQuantity('${item.name}', 1)">+</button>
+                </div>
+                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+            `;
+            cartItemsContainer.appendChild(cartItem);
+        });
+        document.getElementById('cart-total').innerText = total.toFixed(2);
+    }
+
+    function changeQuantity(itemName, change) {
+        const item = cart.find(cartItem => cartItem.name === itemName);
+        if (item) {
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                cart = cart.filter(cartItem => cartItem.name !== itemName);
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+    }
+
+    document.getElementById('details').addEventListener('click', fetchUserInfo);
+    renderCart();
+</script>
+
+</body>
+</html>

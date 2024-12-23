@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f3f4f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        text-align: center;
+    }
+    .spinner {
+        width: 80px;
+        height: 80px;
+        border: 8px solid #e5e5e5;
+        border-top: 8px solid #4caf50;
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+        position: relative;
+    }
+    .checkmark {
+        display: none;
+        font-size: 50px;
+        color: #4caf50;
+        line-height: 80px;
+        text-align: center;
+    }
+    .progress-container {
+        margin-top: 20px;
+        width: 300px;
+        height: 10px;
+        background: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 20px auto;
+    }
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        background: #4caf50;
+        transition: width 0.1s linear;
+    }
+    .message {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="spinner" id="spinner">
+        <div class="checkmark" id="checkmark">&#10003;</div>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <p class="message" id="message">Processing your payment...</p>
+</div>
+
+<script>
+    const progressBar = document.getElementById('progress-bar');
+    const message = document.getElementById('message');
+    const spinner = document.getElementById('spinner');
+    const checkmark = document.getElementById('checkmark');
+
+    let progress = 0;
+
+    const interval = setInterval(() => {
+        progress += 1;
+        progressBar.style.width = progress + '%';
+
+        if (progress >= 100) {
+            clearInterval(interval);
+
+            // Stop spinner and show checkmark
+            spinner.style.animation = 'none';
+            spinner.style.borderColor = '#e5e5e5';
+            checkmark.style.display = 'block';
+
+            // Update message
+            message.textContent = 'Payment Successful!';
+        }
+    }, 30);
+</script>
+
+</body>
+</html>
